@@ -31,13 +31,17 @@ repositories {
 	mavenCentral()
 }
 
+springBoot {
+    executable = true
+}
+
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-neo4j')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-actuator')
-    compile('com.voodoodyne.jackson.jsog:jackson-jsog:1.1.1')
-    compile('io.springfox:springfox-swagger-ui:2.6.1')
-    compile('io.springfox:springfox-swagger2:2.6.1')
+	compile('com.voodoodyne.jackson.jsog:jackson-jsog:1.1.1')
+    	compile('io.springfox:springfox-swagger-ui:2.6.1')
+    	compile('io.springfox:springfox-swagger2:2.6.1')
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jre8:${kotlinVersion}")
 	compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
 	testCompile('org.springframework.boot:spring-boot-starter-test')

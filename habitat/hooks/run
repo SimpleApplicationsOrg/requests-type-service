@@ -1,0 +1,4 @@
+#!/bin/sh
+exec 2>&1
+export JAVA_HOME={{pkgPathFor "core/jre8"}}
+exec java -jar {{pkg.path}}/bin/type-service.jar 

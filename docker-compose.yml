@@ -1,0 +1,15 @@
+version: '3'
+services:
+  neo4j:
+    image: neo4j:3.2.3
+    ports:
+      - 7474:7474
+      - 7687:7687
+    volumes:
+      - "/home/mateus/work/neo4j-community-3.2.3/data:/data"
+  type-service:
+      image: mateusf777/type-service:latest
+      ports:
+        - 8080:8080
+      links:
+      - neo4j
