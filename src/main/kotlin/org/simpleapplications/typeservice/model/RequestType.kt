@@ -14,6 +14,6 @@ data class RequestType (
     var name: String? = null,
     var description: String? = null,
     @Relationship(type = "HAS_FIELD_TYPE", direction = Relationship.OUTGOING)
-    var fieldType: MutableList<FieldType>? = null
+    var fieldTypes: MutableList<FieldType>? = null
 )
 

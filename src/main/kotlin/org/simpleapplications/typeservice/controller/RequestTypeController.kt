@@ -4,6 +4,7 @@ import io.swagger.annotations.Api
 import org.simpleapplications.typeservice.service.RequestTypeService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @Api
@@ -12,27 +13,30 @@ import org.springframework.web.bind.annotation.*
 class RequestTypeController
 @Autowired constructor(val requestTypeService: RequestTypeService) {
 
-    @RequestMapping(value = "/type/all", method = arrayOf(RequestMethod.GET))
-    fun findAll() = requestTypeService.findAll()
+    @RequestMapping(value = "/types/", method = arrayOf(RequestMethod.GET))
+    fun findAllTypes() = requestTypeService.findAllTypes()
 
-    @RequestMapping(value = "/type/add", method = arrayOf(RequestMethod.POST))
-    fun add(@RequestParam name: String, @RequestParam description: String) {
-        requestTypeService.addRequestType(name, description)
-    }
+    @RequestMapping(value = "/types/", method = arrayOf(RequestMethod.POST))
+    fun add(@RequestParam name: String, @RequestParam description: String) = requestTypeService.addRequestType(name, description)
 
-    @RequestMapping(value = "/type/remove/{requestTypeId}", method = arrayOf(RequestMethod.DELETE))
-    fun remove(@PathVariable requestTypeId: Long) {
+    @RequestMapping(value = "/types/{requestTypeId}", method = arrayOf(RequestMethod.DELETE))
+    fun remove(@PathVariable requestTypeId: Long) : ResponseEntity<Void> {
         requestTypeService.removeRequestType(requestTypeId)
+        return ResponseEntity.noContent().build()
     }
 
-    @RequestMapping(value = "/type/add/fieldType", method = arrayOf(RequestMethod.POST))
-    fun addFieldType(@RequestParam requestTypeId: Long, @RequestParam name: String, @RequestParam required: Boolean) {
+    @RequestMapping(value = "/types/{requestTypeId}/fieldTypes", method = arrayOf(RequestMethod.GET))
+    fun findAllFieldTypes(@RequestParam requestTypeId: Long) = requestTypeService.findAllFieldTypes(requestTypeId)
+
+
+    @RequestMapping(value = "/types/{requestTypeId}/fieldTypes", method = arrayOf(RequestMethod.POST))
+    fun addFieldType(@RequestParam requestTypeId: Long, @RequestParam name: String, @RequestParam required: Boolean) =
         requestTypeService.addFieldType(requestTypeId, name, required)
-    }
 
-    @RequestMapping(value = "/type/remove/fieldType/{fieldTypeId}", method = arrayOf(RequestMethod.DELETE))
-    fun removeFieldType(@PathVariable fieldTypeId: Long) {
-        requestTypeService.removeFieldType(fieldTypeId)
+    @RequestMapping(value = "/types/{requestTypeId}/fieldTypes/{fieldTypeId}", method = arrayOf(RequestMethod.DELETE))
+    fun removeFieldType(@RequestParam requestTypeId: Long, @PathVariable fieldTypeId: Long) : ResponseEntity<Void> {
+        requestTypeService.removeFieldType(requestTypeId, fieldTypeId)
+        return ResponseEntity.noContent().build()
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND)

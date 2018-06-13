@@ -5,5 +5,7 @@ import org.springframework.data.neo4j.repository.GraphRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface RequestTypeRepository : GraphRepository<RequestType>
+interface RequestTypeRepository : GraphRepository<RequestType> {
+    override fun findAll() : List<RequestType>?
+}
 
