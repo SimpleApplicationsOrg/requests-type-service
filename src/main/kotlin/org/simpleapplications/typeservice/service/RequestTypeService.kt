@@ -11,31 +11,32 @@ import org.springframework.stereotype.Service
 class RequestTypeService
 @Autowired constructor(val requestTypeRepo: RequestTypeRepository, val fieldTypeRepo: FieldTypeRepository) {
 
-    fun findAllTypes()  = requestTypeRepo.findAll()
+    fun findAllTypes(): MutableIterable<RequestType> = requestTypeRepo.findAll()
 
     fun addRequestType(name: String, description: String) : RequestType {
         val requestType = RequestType(name = name, description = description)
         return requestTypeRepo.save(requestType)
     }
 
-    fun removeRequestType(id: Long) {
-        val requestType = requestTypeRepo.findOne(id)
-        requestTypeRepo.delete(requestType)
-    }
+    fun removeRequestType(requestTypeId: Long) = requestTypeRepo.findById(requestTypeId).ifPresent(requestTypeRepo::delete)
 
-    fun findAllFieldTypes(requestTypeId: Long) = requestTypeRepo.findOne(requestTypeId).fieldTypes
+    fun findAllFieldTypes(requestTypeId: Long) = requestTypeRepo.findById(requestTypeId).map { it.fieldTypes }!!
 
     fun addFieldType(requestTypeId: Long, name: String, required: Boolean) : RequestType {
-        val requestType = requestTypeRepo.findOne(requestTypeId)
-        requestType.fieldTypes?.add(FieldType(name = name, required = required))
-        return requestTypeRepo.save(requestType)
+        return requestTypeRepo.findById(requestTypeId)
+                .takeIf { it.isPresent }
+                .let { optionalRequestType ->
+                    val requestType = optionalRequestType!!.get()
+                    requestType.fieldTypes.add(FieldType(name = name, required = required))
+                    return@let requestTypeRepo.save(requestType)
+                }
     }
 
-    fun removeFieldType(requestTypeId: Long, fieldTypeId: Long) {
-        val fieldType = requestTypeRepo
-                .findOne(requestTypeId)
-                .fieldTypes?.find { fieldType -> fieldType.id == fieldTypeId }
-        fieldTypeRepo.delete(fieldType)
-    }
+    fun removeFieldType(requestTypeId: Long, fieldTypeId: Long) =
+        requestTypeRepo.findById(requestTypeId).ifPresent { requestType ->
+            requestType.fieldTypes
+                    .find { it.id == fieldTypeId }
+                    ?.let(fieldTypeRepo::delete)
+        }
 
 }
